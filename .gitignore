@@ -1,0 +1,18 @@
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+crash.log
+
+# Secrets
+*.pem
+*.key
+*.tfvars
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Visual Studio cache/options directory
+.vs/

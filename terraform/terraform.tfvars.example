@@ -1,0 +1,41 @@
+tenancy_ocid      = "ocid1.tenancy.oc1..xxxx"
+user_ocid         = "ocid1.user.oc1..xxxx"
+fingerprint       = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+
+# OCI APIキー（秘密鍵）のパスを指定
+private_key_path  = "C:/Users/ユーザー名/.oci/oci_api_key.pem"
+
+# region と image_ocid は同じリージョンにする必要があります
+region            = "ap-tokyo-1"
+
+# OCI公式の image 一覧から、利用リージョンの Windows image OCID を指定してください
+# https://docs.oracle.com/en-us/iaas/images/index.htm
+# ※ VM.Standard.E4.Flex を使う場合は、-VM-PV- ではない通常の -VM- イメージを選択してください
+image_ocid = "ocid1.image.oc1.ap-tokyo-1.xxxxx"
+
+# ----------------------------------------
+# コンパートメント設定
+# ----------------------------------------
+# OCIコンソールでコンパートメントを作成し、OCIDを指定します
+#
+# 手順：
+# 1. OCIコンソールにログイン
+# 2. 「アイデンティティとセキュリティ」→「コンパートメント」を選択
+# 3. 「コンパートメントの作成」から新規作成
+# 4. 作成後、詳細画面からOCIDをコピー
+#
+# 例：oracle-replace-lab などの名称で作成
+compartment_ocid = "ocid1.compartment.oc1...."
+
+# 作成リソースの名前プレフィックス（コンパートメント名にも使用）
+prefix = "oracle-replace-lab"
+
+# 検証用のため全開放（本番では必ず制限してください）
+# 例: "xxx.xxx.xxx.xxx/32"
+admin_cidr = "0.0.0.0/0"
+
+# 利用する image に応じて、OCIコンソールで選択可能な Shape を確認してください
+shape                   = "VM.Standard.E5.Flex"
+ocpus                   = 1
+memory_in_gbs           = 8
+boot_volume_size_in_gbs = 100
