@@ -30,6 +30,10 @@ compartment_ocid = "ocid1.compartment.oc1...."
 # 作成リソースの名前プレフィックス（コンパートメント名にも使用）
 prefix = "oracle-replace-lab"
 
+# 作成するVMのプライベートIPアドレス
+vm1_private_ip = "10.0.1.10"
+vm2_private_ip = "10.0.1.11"
+
 # 検証用のため全開放（本番では必ず制限してください）
 # 例: "xxx.xxx.xxx.xxx/32"
 admin_cidr = "0.0.0.0/0"
@@ -39,3 +43,4 @@ shape                   = "VM.Standard.E5.Flex"
 ocpus                   = 1
 memory_in_gbs           = 8
 boot_volume_size_in_gbs = 100
+

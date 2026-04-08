@@ -18,6 +18,9 @@ provider "oci" {
   auth         = "APIKey"
 }
 
+# -------------------------
+# VCN
+# -------------------------
 resource "oci_core_vcn" "main" {
   compartment_id = var.compartment_ocid
   cidr_blocks    = [var.vcn_cidr]
@@ -44,16 +47,21 @@ resource "oci_core_route_table" "public" {
   }
 }
 
+# -------------------------
+# Security List
+# -------------------------
 resource "oci_core_security_list" "public" {
   compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.main.id
   display_name   = "${var.prefix}-public-sl"
 
+  # OUTBOUND
   egress_security_rules {
     protocol    = "all"
     destination = "0.0.0.0/0"
   }
 
+  # RDP
   ingress_security_rules {
     protocol = "6"
     source   = var.admin_cidr
@@ -63,6 +71,7 @@ resource "oci_core_security_list" "public" {
     }
   }
 
+  # Oracle (外部から)
   ingress_security_rules {
     protocol = "6"
     source   = var.admin_cidr
@@ -72,12 +81,26 @@ resource "oci_core_security_list" "public" {
     }
   }
 
+  # Oracle (VM間)
+  ingress_security_rules {
+    protocol = "6"
+    source   = var.subnet_cidr
+    tcp_options {
+      min = 1521
+      max = 1521
+    }
+  }
+
+  # ICMP（VM間）
   ingress_security_rules {
     protocol = "1"
-    source   = var.vcn_cidr
+    source   = var.subnet_cidr
   }
 }
 
+# -------------------------
+# Subnet
+# -------------------------
 resource "oci_core_subnet" "public" {
   compartment_id             = var.compartment_ocid
   vcn_id                     = oci_core_vcn.main.id
@@ -89,6 +112,9 @@ resource "oci_core_subnet" "public" {
   prohibit_public_ip_on_vnic = false
 }
 
+# -------------------------
+# AD / Image
+# -------------------------
 data "oci_identity_availability_domains" "ads" {
   compartment_id = var.tenancy_ocid
 }
@@ -98,6 +124,9 @@ locals {
   image_id = var.image_ocid
 }
 
+# -------------------------
+# VM1（source）
+# -------------------------
 resource "oci_core_instance" "vm1" {
   availability_domain = local.ad_name
   compartment_id      = var.compartment_ocid
@@ -112,6 +141,7 @@ resource "oci_core_instance" "vm1" {
   create_vnic_details {
     subnet_id        = oci_core_subnet.public.id
     assign_public_ip = true
+    private_ip       = var.vm1_private_ip
     display_name     = "${var.prefix}-vm1-vnic"
     hostname_label   = "vm1"
   }
@@ -125,6 +155,9 @@ resource "oci_core_instance" "vm1" {
   metadata = {}
 }
 
+# -------------------------
+# VM2（dest）
+# -------------------------
 resource "oci_core_instance" "vm2" {
   availability_domain = local.ad_name
   compartment_id      = var.compartment_ocid
@@ -139,6 +172,7 @@ resource "oci_core_instance" "vm2" {
   create_vnic_details {
     subnet_id        = oci_core_subnet.public.id
     assign_public_ip = true
+    private_ip       = var.vm2_private_ip
     display_name     = "${var.prefix}-vm2-vnic"
     hostname_label   = "vm2"
   }

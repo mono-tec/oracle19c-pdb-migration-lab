@@ -1,106 +1,155 @@
 # oracle19c-pdb-migration-lab
 
-Oracle Database 19c における  
+Oracle Database 19c における
 PDBクローンによる移行検証環境を構築するためのリポジトリです。
 
 Terraformを使用してOCI上に検証環境を自動構築し、
-Oracle 19cのPDB移行を検証するためのサンプルファイルを配置しています。
+Oracle 19cのPDB移行を検証するためのサンプルファイルを提供します。
 
-## 概要
+---
+
+## ■ 対象読者
+
+* Oracle 19c の移行検証を行いたい方
+* PDBクローンによる移行手順を試したい方
+* OCI + Terraform による検証環境構築を学びたい方
+
+---
+
+## ■ 概要
 
 本リポジトリでは以下を再現できます：
 
-- OCI上にTerraformでインフラ構築
-- Oracle 19c サイレントインストール
-- CDB/PDB構成の作成
-- DBリンクを用いたPDBクローン
+* OCI上にTerraformでインフラ構築
+* Oracle 19c サイレントインストール
+* CDB/PDB構成の作成
+* DBリンクを用いたPDBクローン
 
-## 構成
+---
 
-- terraform/ : OCI環境構築（ローカルで実行）
-- vm-update/ : VM上で実行する作業一式（VMのデスクトップ等にコピーして使用）
+## ■ 構成
 
-  - oracle-install/ : Oracle 19c サイレントインストール
-  - dbca/ : DB作成
-  - network/ : ネットワーク設定（準備中）
-  - sql/ : クローンSQL（準備中）
+### ■ Terraform（OCI環境構築）
 
-※ vm-update フォルダは、そのままVMへコピーして使用します。
+```text
+terraform/
+  base/ : 基本構成（VM1 / VM2）
+```
 
-## 使い方（概要）
+* Terraformはローカル環境で実行します
+* `terraform/base` ディレクトリで実行してください
 
-1. Terraformで環境構築
-2. Oracleインストール
-3. DB作成
-4. PDBクローン実行
+```powershell
+cd terraform/base
+terraform init
+terraform apply
+```
 
-詳細はZenn記事を参照してください。
+---
 
+### ■ VM作業用スクリプト
 
-## 設定ファイルについて
+```text
+vm-update/
+  oracle-install/ : Oracle 19c サイレントインストール
+  dbca/           : DB作成
+  network/        : ネットワーク設定
+  sql/            : クローンSQL（準備中）
+```
+
+* `vm-update` フォルダはVMへコピーして使用します（デスクトップ等）
+
+---
+
+## ■ 使い方（概要）
+
+1. TerraformでOCI環境を構築
+2. VMへ `vm-update` フォルダをコピー
+3. Oracleサイレントインストール実行
+4. DBCAでCDB/PDB作成
+5. ネットワーク設定（listener / tns）
+6. DBリンク作成・PDBクローン
+
+👉 詳細手順はZenn記事を参照してください
+
+---
+
+## ■ Zenn記事
+
+本リポジトリの詳細手順は以下の記事で解説しています：
+
+* https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-01-overview
+* https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-02-terraform
+* https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-03-oracleinstall
+* https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-04-dbca
+* https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-05-network
+
+---
+
+## ■ 設定ファイルについて
 
 Terraform実行前に、以下のファイルを作成してください。
+
 ```text
 terraform.tfvars
 ```
 
 以下のサンプルをコピーして編集します。
+
 ```text
 terraform.tfvars.example
 ```
 
-※ APIキーなどの機密情報はGitHubに含めないようにしてください。
+※ APIキーなどの機密情報はGitHubに含めないようにしてください
 
+---
 
-## OCI APIキーの作成
+## ■ OCI APIキーの作成
 
 TerraformからOCIを操作するためには、APIキーの作成が必要です。
 
-本リポジトリでは、Windows環境向けに  
+本リポジトリでは、Windows環境向けに
 RSA鍵を作成するPowerShellスクリプトを用意しています。
+
 ※ 作成した秘密鍵（.pem）は絶対に公開しないでください
 
-### 事前準備
+### ■ 事前準備
 
-OpenSSLが必要です。未インストールの場合は、以下でインストールできます。
+OpenSSLが必要です。
 
 ```powershell
 winget install -e --id ShiningLight.OpenSSL
 ```
 
+---
 
 ## ■ prefixについて
 
-Terraformで作成するリソースには、prefixが付与されます。
+Terraformで作成するリソースには prefix が付与されます。
 
 ```hcl
 prefix = "oracle-replace-lab"
 ```
 
-例えば以下のような名前で作成されます：
+例：
 
-- VCN
-- Subnet
-- VM
+* VCN
+* Subnet
+* VM
 
-※ 複数回実行する場合は、prefixを変更するとリソースの識別がしやすくなります。
+※ 複数回実行する場合は prefix を変更すると識別しやすくなります
 
+---
 
 ## ■ コンパートメントの設定
 
 OCIコンソールで作成したコンパートメントのOCIDを指定します。
 
-### 手順（概要）
-
-1. OCIコンソールにログイン  
-2. 「アイデンティティとセキュリティ」→「コンパートメント」を選択  
-3. 「コンパートメントの作成」から新規作成  
-4. 作成後、詳細画面からOCIDをコピー  
-
 ```hcl
 compartment_ocid = "ocid1.compartment.oc1...."
 ```
-※ 詳細な手順はZenn記事を参照してください。
+
+詳細は以下を参照してください：
 https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-01-overview
 
 ---
@@ -109,20 +158,18 @@ https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-01-overview
 
 OCIのイメージはリージョンごとに異なります。
 
-以下の公式ページから対象リージョンのOCIDを確認してください。
-
+以下の公式ページから確認してください：
 https://docs.oracle.com/en-us/iaas/images/index.htm
-
-例（terraform.tfvars）：
 
 ```hcl
 image_ocid = "ocid1.image.oc1.ap-xxxxx-1.xxxxx"
 ```
-※ region と同じリージョンのOCIDを指定する必要があります
-※ 利用可能なShapeはイメージによって異なるため、OCIコンソールで確認してください
+
+* region と同一リージョンのOCIDを指定してください
+* 利用可能なShapeはイメージに依存します
 
 ---
 
-## ライセンス
+## ■ ライセンス
 
 本リポジトリは MIT License のもとで公開されています。
