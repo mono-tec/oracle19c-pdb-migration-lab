@@ -36,3 +36,12 @@ CDB2 =
       (SERVICE_NAME = cdb2)
     )
   )
+
+PDBCLONE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.1.11)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = pdbclone)
+    )
+  )

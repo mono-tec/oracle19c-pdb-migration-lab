@@ -1,0 +1,11 @@
+ALTER SESSION SET CONTAINER = CDB$ROOT;
+
+DROP DATABASE LINK pdbsrc_link;
+
+CREATE DATABASE LINK pdbsrc_link
+CONNECT TO clone_user IDENTIFIED BY "Oracle123!"
+USING 'PDBSRC';
+
+SELECT * FROM dual@pdbsrc_link;
+
+EXIT;

@@ -1,0 +1,10 @@
+# Add this entry to tnsnames.ora on VM2 when you want to verify with app_user@PDBCLONE
+
+PDBCLONE =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 10.0.1.11)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = pdbclone)
+    )
+  )

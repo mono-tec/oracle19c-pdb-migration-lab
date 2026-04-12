@@ -54,7 +54,7 @@ vm-update/
   oracle-install/ : Oracle 19c サイレントインストール
   dbca/           : DB作成
   network/        : ネットワーク設定
-  sql/            : クローンSQL（準備中）
+  sql/            : クローンSQL
 ```
 
 * `vm-update` フォルダはVMへコピーして使用します（デスクトップ等）
@@ -83,6 +83,8 @@ vm-update/
 * https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-03-oracleinstall
 * https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-04-dbca
 * https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-05-network
+* https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-06-db-link-clone
+* https://zenn.dev/mono_tec/articles/oracle19c-pdb-migration-07-verify
 
 ---
 
